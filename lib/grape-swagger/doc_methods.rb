@@ -191,6 +191,8 @@ module GrapeSwagger
         required   = []
 
         model.documentation.each do |property_name, property_info|
+          next unless exposure = model.exposures[property_name]
+
           p = property_info.dup
 
           required << property_name.to_s if p.delete(:required)
@@ -198,8 +200,7 @@ module GrapeSwagger
           type = if p[:type]
                    p.delete(:type)
                  else
-                   exposure = model.exposures[property_name]
-                   parse_entity_name(exposure[:using]) if exposure
+                   parse_entity_name(exposure[:using])
                  end
 
           if p.delete(:is_array)
