@@ -194,9 +194,11 @@ module GrapeSwagger
         required   = []
 
         model.documentation.each do |property_name, property_info|
-          next unless exposure = model.exposures[property_name]
-
           p = property_info.dup
+
+          exposed_name = p.delete(:alias_for) || property_name
+
+          next unless exposure = model.exposures[exposed_name]
 
           required << property_name.to_s if p.delete(:required)
 
