@@ -57,6 +57,8 @@ module GrapeSwagger
           value = additional_documentation.merge(value)
         end
 
+        next if value.is_a?(Hash) && value[:documentation] && value[:documentation].try(:[], :hide)
+
         description          = value.is_a?(Hash) ? value[:desc] || value[:description] : ''
         required             = value.is_a?(Hash) ? !!value[:required] : false
         default_value        = value.is_a?(Hash) ? value[:default] : nil
@@ -109,7 +111,7 @@ module GrapeSwagger
 
         parsed_params.merge!(enum_or_range_values) if enum_or_range_values
         parsed_params
-      end
+      end.compact
     end
 
     def content_types_for(target_class)
