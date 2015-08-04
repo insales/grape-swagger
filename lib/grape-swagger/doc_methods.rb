@@ -200,7 +200,7 @@ module GrapeSwagger
 
           exposed_name = p.delete(:alias_for) || property_name
 
-          next unless exposure = model.exposures[exposed_name]
+          next unless exposure = model.find_exposure(exposed_name)
 
           required << property_name.to_s if p.delete(:required)
 
@@ -250,9 +250,9 @@ module GrapeSwagger
 
       models.each do |model|
         # get model references from exposures with a documentation
-        nested_models = model.exposures.map do |_, config|
-          if config.key?(:documentation)
-            model = config[:using]
+        nested_models = model.root_exposures.to_a.map do |exposure|
+          if exposure.respond_to?(:documentation)
+            model = exposure.instance_variable_get(:@options)[:using]
             model.respond_to?(:constantize) ? model.constantize : model
           end
         end.compact
