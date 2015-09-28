@@ -25,6 +25,10 @@ module GrapeSwagger
 
       non_nested_parent_params = get_non_nested_params(parsed_array_params)
 
+      if body_params = non_nested_parent_params[:_body] || non_nested_parent_params["_body"]
+        non_nested_parent_params = { _body: body_params }
+      end
+
       non_nested_parent_params.map do |param, value|
         items = {}
 
@@ -62,8 +66,6 @@ module GrapeSwagger
         if additional_documentation && value.is_a?(Hash)
           value = additional_documentation.merge(value)
         end
-
-        next if value.is_a?(Hash) && value[:documentation] && value[:documentation].try(:[], :hide)
 
         description          = value.is_a?(Hash) ? value[:desc] || value[:description] : ''
         required             = value.is_a?(Hash) ? !!value[:required] : false
